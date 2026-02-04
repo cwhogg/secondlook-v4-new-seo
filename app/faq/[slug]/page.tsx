@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { getAllPosts, getPostBySlug } from '../../../lib/content'
 
 interface FaqPageProps {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 export async function generateStaticParams() {
@@ -14,7 +14,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: FaqPageProps) {
-  const post = getPostBySlug('faq', params.slug)
+  const { slug } = await params
+  const post = getPostBySlug('faq', slug)
   
   if (!post) {
     return {
@@ -34,8 +35,9 @@ export async function generateMetadata({ params }: FaqPageProps) {
   }
 }
 
-export default function FaqPage({ params }: FaqPageProps) {
-  const post = getPostBySlug('faq', params.slug)
+export default async function FaqPage({ params }: FaqPageProps) {
+  const { slug } = await params
+  const post = getPostBySlug('faq', slug)
   
   if (!post) {
     notFound()

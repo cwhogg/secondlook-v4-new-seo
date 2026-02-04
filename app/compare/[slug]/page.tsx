@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { getAllPosts, getPostBySlug } from '../../../lib/content'
 
 interface ComparisonPageProps {
-  params: { slug: string }
+  params: Promise<{ slug: string }>
 }
 
 export async function generateStaticParams() {
@@ -14,7 +14,8 @@ export async function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: ComparisonPageProps) {
-  const post = getPostBySlug('comparison', params.slug)
+  const { slug } = await params
+  const post = getPostBySlug('comparison', slug)
   
   if (!post) {
     return {
@@ -34,8 +35,9 @@ export async function generateMetadata({ params }: ComparisonPageProps) {
   }
 }
 
-export default function ComparisonPage({ params }: ComparisonPageProps) {
-  const post = getPostBySlug('comparison', params.slug)
+export default async function ComparisonPage({ params }: ComparisonPageProps) {
+  const { slug } = await params
+  const post = getPostBySlug('comparison', slug)
   
   if (!post) {
     notFound()
